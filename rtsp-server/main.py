@@ -4,11 +4,11 @@ import gi
 gi.require_version('Gst', '1.0')
 gi.require_version('GstRtspServer', '1.0')
 
-from gi.repository import Gst, GObject, GstRtspServer
+from gi.repository import Gst, GstRtspServer, GLib
 
 class Stream:
     def __init__(
-        self, 
+        self,
         server,
         pipeline,
         endpoint
@@ -16,17 +16,15 @@ class Stream:
         self.server = server
         self.pipeline = pipeline
         self.endpoint = endpoint
-        
+
     def video_stream(self):
         factory = GstRtspServer.RTSPMediaFactory.new()
         factory.set_launch(self.pipeline)
         factory.set_shared(True)
         self.server.get_mount_points().add_factory(self.endpoint, factory)
-        
-        
+
 
 def main():
-    GObject.threads_init()
     Gst.init(None)
 
     server = GstRtspServer.RTSPServer.new()
@@ -38,7 +36,7 @@ def main():
     )
     stream_1 = Stream(server, pipeline_vid1, '/vid1')
     stream_1.video_stream()
-    
+
 
     # RTSP path for vid2
     pipeline_vid2 = (
@@ -46,7 +44,7 @@ def main():
     )
     stream_2 = Stream(server, pipeline_vid2, '/vid2')
     stream_2.video_stream()
-    
+
 
     # RTSP path for vid3
     pipeline_vid3 = (
@@ -54,26 +52,26 @@ def main():
     )
     stream_3 = Stream(server, pipeline_vid3, '/vid3')
     stream_3.video_stream()
-    
-    
+
+
     # RTSP path for vid4
     pipeline_vid4 = (
         "filesrc location=./videos/vid4.mp4 ! qtdemux ! h264parse ! rtph264pay name=pay0 pt=96"
     )
     stream_4 = Stream(server, pipeline_vid4, '/vid4')
     stream_4.video_stream()
-    
-    
+
+
     # RTSP path for webcam
     pipeline_webcam = (
-      "ksvideosrc ! decodebin ! videoconvert ! autovideosink ! qtdemux ! h264parse ! rtph264pay name=pay0 pt=96"
+        "ksvideosrc device-index=0 ! videoconvert ! x264enc tune=zerolatency key-int-max=15 bitrate=1000 ! h264parse ! rtph264pay name=pay0 pt=96 mtu=1200 ! rtspclientsink location=rtsp://127.0.0.1:8554/live sync=false"
     )
     stream_4 = Stream(server, pipeline_webcam, '/live')
     stream_4.video_stream()
 
     server.attach(None)
 
-    main_loop = GObject.MainLoop()
+    main_loop = GLib.MainLoop()
     main_loop.run()
 
 if __name__ == "__main__":
