@@ -1,4 +1,5 @@
 import gi
+import socket
 
 #  Required tools
 gi.require_version('Gst', '1.0')
@@ -26,8 +27,12 @@ class Stream:
 def main():
     Gst.init(None)
 
+    server_address = socket.gethostbyname(socket.gethostname())
+    server_port = "8554"
+
     server = GstRtspServer.RTSPServer.new()
-    server.set_service("8554")
+    server.set_address(server_address)
+    server.set_service(server_port)
 
     # RTSP path for vid1
     pipeline_vid1 = (
@@ -68,10 +73,14 @@ def main():
     stream_4 = Stream(server, pipeline_webcam, '/live')
     stream_4.video_stream()
 
+    print(f"RTSP Server started on {server_address}:{server_port}")
     server.attach(None)
 
     main_loop = GLib.MainLoop()
-    main_loop.run()
+    try:
+        main_loop.run()
+    except KeyboardInterrupt:
+        main_loop.quit()
 
 if __name__ == "__main__":
     main()
