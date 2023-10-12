@@ -22,8 +22,6 @@ class Stream:
         factory.set_launch(self.pipeline)
         factory.set_shared(True)
         self.server.get_mount_points().add_factory(self.endpoint, factory)
-        
-        
 
 def main():
     GObject.threads_init()
@@ -66,7 +64,7 @@ def main():
     
     # RTSP path for webcam
     pipeline_webcam = (
-      "ksvideosrc ! decodebin ! videoconvert ! autovideosink ! qtdemux ! h264parse ! rtph264pay name=pay0 pt=96"
+        "ksvideosrc device-index=0 ! videoconvert ! x264enc tune=zerolatency ! h264parse ! rtph264pay name=pay0 pt=96"
     )
     stream_4 = Stream(server, pipeline_webcam, '/live')
     stream_4.video_stream()
