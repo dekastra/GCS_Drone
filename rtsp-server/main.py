@@ -1,27 +1,11 @@
 import gi
+from Streams import Stream
 
 #  Required tools
 gi.require_version('Gst', '1.0')
 gi.require_version('GstRtspServer', '1.0')
 
 from gi.repository import Gst, GObject, GstRtspServer
-
-class Stream:
-    def __init__(
-        self, 
-        server,
-        pipeline,
-        endpoint
-    ):
-        self.server = server
-        self.pipeline = pipeline
-        self.endpoint = endpoint
-        
-    def video_stream(self):
-        factory = GstRtspServer.RTSPMediaFactory.new()
-        factory.set_launch(self.pipeline)
-        factory.set_shared(True)
-        self.server.get_mount_points().add_factory(self.endpoint, factory)
 
 def main():
     GObject.threads_init()
@@ -64,7 +48,7 @@ def main():
     
     # RTSP path for webcam
     pipeline_webcam = (
-        "ksvideosrc device-index=0 ! videoconvert ! x264enc tune=zerolatency ! h264parse ! rtph264pay name=pay0 pt=96"
+        "ksvideosrc device-index=0 ! videoconvert ! x264enc tune=zerolatency key-int-max=15 bitrate=1000 ! h264parse ! rtph264pay name=pay0 pt=96 mtu=1200"
     )
     stream_4 = Stream(server, pipeline_webcam, '/live')
     stream_4.video_stream()
