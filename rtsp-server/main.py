@@ -23,7 +23,6 @@ class Stream:
         factory.set_shared(True)
         self.server.get_mount_points().add_factory(self.endpoint, factory)
 
-
 def main():
     Gst.init(None)
 
