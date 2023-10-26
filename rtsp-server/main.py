@@ -41,7 +41,7 @@ if __name__ == "__main__":
 
     s5 = Stream(
         "Webcam",
-        "ksvideosrc device-index=0 ! videoconvert ! x264enc tune=zerolatency key-int-max=15 bitrate=1000 ! h264parse ! rtph264pay name=pay0 pt=96 mtu=1200",
+        "ksvideosrc device-index=0 ! videoconvert ! x264enc tune=zerolatency key-int-max=15 bitrate=1000 ! h264parse ! rtph264pay name=pay0 pt=96 mtu=1200 | udpsink port:8889",
         "/cam"
     )
 
@@ -54,7 +54,6 @@ if __name__ == "__main__":
         main_loop.run()
     except KeyboardInterrupt:
         main_loop.quit()
-
 
 
 
