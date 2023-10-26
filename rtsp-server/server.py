@@ -6,7 +6,7 @@ gi.require_version('GstRtspServer', '1.0')
 
 from gi.repository import GstRtspServer
 
-class RTSPServer:
+class Server:
     def __init__(self, address, port):
         self.server = GstRtspServer.RTSPServer.new()
         self.server.set_address(address)

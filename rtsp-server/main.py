@@ -1,7 +1,7 @@
 import gi
 import socket
-from RTSPServer import RTSPServer
-from Stream import Stream
+from server import Server
+from stream import Stream
 
 #  Required tools
 gi.require_version('Gst', '1.0')
@@ -12,7 +12,7 @@ from gi.repository import Gst, GLib
 if __name__ == "__main__":
     Gst.init(None)
 
-    rtsp = RTSPServer(socket.gethostbyname(socket.gethostname()),"8554")
+    rtsp = Server(socket.gethostbyname(socket.gethostname()),"8554")
 
     # Video streams
     s1 = Stream(
