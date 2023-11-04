@@ -283,7 +283,7 @@ class main_frame:
         label_batere_frame.pack_propagate(False)
 
         flight_info = tk.Label(self.frame_kotak,
-                               text=f"Altitude = {self.altitude} m/s\nFlight Mode = {self.flight_mode}\nFlight Time = {self.flight_time}",
+                               text=f"Altitude = {self.altitude} m\nFlight Mode = {self.flight_mode}\nFlight Time = {self.flight_time}",
                                font=("Consolas", 11), bg=background_color, justify='left', anchor='w')
         flight_info.place(x=5, y=130)
 
