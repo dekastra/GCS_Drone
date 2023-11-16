@@ -11,8 +11,8 @@ import datetime
 import os
 
 #download ghostscript
-ghostscript_path = r'C:\Program Files (x86)\gs\gs10.02.1\bin'
-os.environ['PATH'] += os.pathsep + ghostscript_path
+# ghostscript_path = r'C:\Program Files (x86)\gs\gs10.02.1\bin'
+# os.environ['PATH'] += os.pathsep + ghostscript_path
 
 class main_frame:
     def __init__(self, root, frame_atas, frame_bawah, frame_kotak):
@@ -72,7 +72,7 @@ class main_frame:
         self.switch_button.place(x=50, y=500)
 
         self.root.bind('<space>', self.switch_videos)
-        self.root.bind('<Return>', self.save_canvas_image)
+        # self.root.bind('<Return>', self.save_canvas_image)
 
         # keyboard.add_hotkey('space',lambda: )
 
@@ -92,14 +92,22 @@ class main_frame:
         self.y = 23.435
         self.z = 43.535
 
+        
+        self.dummy_time = datetime.datetime.now()
+        self.flight_time = self.dummy_time.strftime("%H:%M:%S")
+
+
         self.altitude = 3.17
         self.voltage = 12.59
         self.flight_mode = "Stabilize"
-        self.flight_time = datetime.datetime.now()
+        
+        
+       
 
         self.drone_status()
         self.update()
 
+    
 
     def switch_videos(self, event=None):
         if self.current_canvas == 1:
@@ -119,22 +127,22 @@ class main_frame:
         self.canvas4.delete("all")
         self.canvas5.delete("all")
 
-    def save_canvas_image(self, event=None):
-        # if self.current_canvas == 1:
-        x = datetime.datetime.now()
-        canvas_image = self.canvas1.postscript(colormode='color')
-        image = Image.open(io.BytesIO(canvas_image.encode('utf-8')))
-        image = np.array(image)
+    # def save_canvas_image(self, event=None):
+    #     # if self.current_canvas == 1:
+    #     x = datetime.datetime.now()
+    #     canvas_image = self.canvas1.postscript(colormode='color')
+    #     image = Image.open(io.BytesIO(canvas_image.encode('utf-8')))
+    #     image = np.array(image)
 
-        image = cv2.cvtColor(image, cv2.COLOR_RGBA2BGR)
+    #     image = cv2.cvtColor(image, cv2.COLOR_RGBA2BGR)
 
-        directory = r'C:\Users\XPS15\PycharmProjects\drone_gcs\images' #change to new directory
-        if not os.path.exists(directory):
-            os.makedirs(directory)
+    #     directory = r'C:\Users\XPS15\PycharmProjects\drone_gcs\images' #change to new directory
+    #     if not os.path.exists(directory):
+    #         os.makedirs(directory)
 
-        filename = os.path.join(directory, f"Capture_at_{x.hour}_{x.minute}_{x.second}.png")
-        cv2.imwrite(filename, image)
-        print(f"Frame from canvas1 saved in {filename}")
+    #     filename = os.path.join(directory, f"Capture_at_{x.hour}_{x.minute}_{x.second}.png")
+    #     cv2.imwrite(filename, image)
+    #     print(f"Frame from canvas1 saved in {filename}")
 
     def resize_frame(self, frame):
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
@@ -272,25 +280,50 @@ class main_frame:
         self.battery_progress.place(x=75, y=61)
         label_batere_frame.pack_propagate(False)
 
-        battery_info = tk.Label(self.frame_kotak,
-                                text=f"Voltage = {self.voltage}v",
-                                font=("Consolas", 11), bg=background_color)
-        battery_info.place(x=5, y=85)
+        #======================== Speed Label ====================================================== #
 
         speed_label = tk.Label(self.frame_kotak, text=f"Speed = {self.drone_speed} m/s ", font=("Consolas", 11),
                                bg="green", fg="white")
-        speed_label.place(x=5, y=110)
+        speed_label.place(x=5, y=95)
         label_batere_frame.pack_propagate(False)
 
-        flight_info = tk.Label(self.frame_kotak,
-                               text=f"Altitude = {self.altitude} m\nFlight Mode = {self.flight_mode}\nFlight Time = {self.flight_time}",
-                               font=("Consolas", 11), bg=background_color, justify='left', anchor='w')
-        flight_info.place(x=5, y=130)
+        # flight_info = tk.Label(self.frame_kotak,
+        #                        text=f"Altitude = {self.altitude} m\nFlight Mode = {self.flight_mode}\nFlight Time = {self.flight_time}",
+        #                        font=("Consolas", 11), bg=background_color, justify='left', anchor='w')
+        # flight_info.place(x=5, y=130)
+        
+
+        # ============================= Flight data =========================================== #
+
+        flight_data = tk.Frame(self.frame_kotak, width=285, height=120, bg="white", highlightbackground="black",
+                               highlightthickness=2)
+        flight_data.place(x=5, y=130)
+        flight_data.pack_propagate(False)
+
+        flight_data_label = tk.Label(flight_data, text="Flight Data", font=("Consolas", 11), fg="black", bg= background_color)
+        flight_data_label.pack(pady=1)
+
+        voltage = tk.Label(flight_data, text=f"Voltage\t\t= {self.voltage}", font=("Consolas", 10), fg="black", bg= background_color)
+        voltage.place(x=5, y= 25)
+
+        altitude = tk.Label(flight_data, text=f"Altitude\t= {self.altitude}", font=("Consolas", 10), fg="black", bg= background_color)
+        altitude.place(x=5, y= 45)
+
+        fligt_mode = tk.Label(flight_data, text=f"Flight Mode\t= {self.flight_mode}", font=("Consolas", 10), fg="black", bg= background_color)
+        fligt_mode.place(x=5, y= 65)
+
+        voltage = tk.Label(flight_data, text=f"Flight Time\t= {self.flight_time}", font=("Consolas", 10), fg="black", bg= background_color)
+        voltage.place(x=5, y= 85)
+
+
+        
+        # ============================ frame Coordinates ======================================= #
 
         coordinates = tk.Frame(self.frame_kotak, width=285, height=100, bg="white", highlightbackground="black",
                                highlightthickness=2)
-        coordinates.place(x=5, y=250)
+        coordinates.place(x=5, y=260)
         coordinates.pack_propagate(False)
+
 
         coordinate_label = tk.Label(coordinates, text="Coordinates", font=("Consolas", 10), bg="green", fg="white")
         coordinate_label.pack(pady=1)
