@@ -3,6 +3,7 @@ from tkinter.ttk import *
 from tkinter import*
 import cv2
 from PIL import Image, ImageTk
+from PIL import *
 from video_utility import GetVideo, VideoData
 import keyboard
 import numpy as np
@@ -68,8 +69,11 @@ class main_frame:
         self.canvas5.place(x=1050, y=50)
         self.canvas5.pack_propagate(False)
 
-        self.switch_button = tk.Button(self.frame_kotak, text="Switch Videos", command=self.switch_videos)
-        self.switch_button.place(x=50, y=500)
+        self.switch_button = tk.Button(self.frame_kotak, text="Switch Videos",
+                                       width=38,height=2,
+                                       font=("consolas bold",10),
+                                       command=self.switch_videos)
+        self.switch_button.place(x=10,y=370)
 
         self.root.bind('<space>', self.switch_videos)
         # self.root.bind('<Return>', self.save_canvas_image)
@@ -261,6 +265,9 @@ class main_frame:
             self.battery_label.config(text=f"{self.battery_level}%")
             self.root.after(10000, self.decrease_battery)
 
+    
+
+    
     def drone_status(self):
 
         background_color = self.frame_kotak.cget("bg")
@@ -314,8 +321,8 @@ class main_frame:
 
         voltage = tk.Label(flight_data, text=f"Flight Time\t= {self.flight_time}", font=("Consolas", 10), fg="black", bg= background_color)
         voltage.place(x=5, y= 85)
-
-
+    
+        # ============================ Campuss Logo ============================================ #
         
         # ============================ frame Coordinates ======================================= #
 
@@ -332,9 +339,9 @@ class main_frame:
                                      font=("Consolas", 11), bg=background_color)
         coordinates_label.pack(pady=1)
 
-        switch_info = tk.Label(self.frame_kotak, text='<Space> = Switch Video\n <Enter> = Capture Image',
-                               font=("Consolas", 11), bg=background_color)
-        switch_info.place(x=5, y=400)
+        # switch_info = tk.Label(self.frame_kotak, text='<Space> = Switch Video\n <Enter> = Capture Image',
+        #                        font=("Consolas", 11), bg=background_color)
+        # switch_info.place(x=5, y=400)
 
         self.decrease_battery()
 
