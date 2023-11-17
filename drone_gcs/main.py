@@ -336,8 +336,6 @@ class MainFrame:
             self.root.after(10000, self.decrease_battery)
 
     
-
-    
     def drone_status(self):
 
         background_color = self.frame_kotak.cget("bg")
@@ -393,6 +391,14 @@ class MainFrame:
         voltage.place(x=5, y= 85)
     
         # ============================ Campuss Logo ============================================ #
+
+        campus = tk.Label(self.frame_kotak, text=f"In Partnership With", font=("Consolas", 11), fg="black", bg= background_color)
+        campus.place(x=72, y= 460)
+
+        self.image = PhotoImage(file="images/trias3.png")
+        self.photo = Label(self.frame_kotak,image=self.image )
+        self.photo["bd"] = 0
+        self.photo.place(x=11,y=495)
         
         # ============================ frame Coordinates ======================================= #
 
