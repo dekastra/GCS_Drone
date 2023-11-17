@@ -10,6 +10,7 @@ import numpy as np
 import io
 import datetime
 import os
+from tkinter import messagebox
 
 #download ghostscript
 # ghostscript_path = r'C:\Program Files (x86)\gs\gs10.02.1\bin'
@@ -19,17 +20,22 @@ class InputVideo:
         self.root = root
         self.root.title("Video Viewer")
         self.root.resizable(False, False)
+        self.root.iconbitmap("images\logodrone.ico")
 
         screen_width = self.root.winfo_screenwidth()
         screen_height = self.root.winfo_screenheight()
-        x_position = (screen_width - 480) // 2
-        y_position = (screen_height - 340) // 2
-        self.root.geometry(f"480x340+{x_position}+{y_position}")
+        x_position = (screen_width - 490) // 2
+        y_position = (screen_height - 540) // 2
+        self.root.geometry(f"490x540+{x_position}+{y_position}")
 
         self.root.resizable(False, False)
 
         self.cam_labels = ["Camera 1", "Camera 2", "Camera 3", "Camera 4", "Camera 5"]
         self.entry_variables = [StringVar() for _ in range(5)]
+
+        self.additional_labels = ["Input 1", "Input 2", "Input 3", "Input 4", "Input 5"]
+        self.additional_entry_variables = [StringVar() for _ in range(5)]
+
 
         self.title_box()
 
@@ -38,20 +44,37 @@ class InputVideo:
         label_judul_frame.pack(pady=5)
 
         for i, cam_label in enumerate(self.cam_labels):
-            label = Label(self.root, text=cam_label, font=("consolas", 12))
-            label.place(x=10, y=60 + 30 * i)
+            gap = 20  
 
-            entry = Entry(self.root, textvariable=self.entry_variables[i], width=40, font=("consolas", 11))
-            entry.place(x=90, y=65 + 30 * i)
+            camera_label = Label(self.root, text=f"{cam_label} =", font=("consolas", 12))
+            camera_label.place(x=10, y=60 + (60 + gap) * i)
 
-        submit_button = Button(self.root, text="Submit", command=self.show_main_frame)
-        submit_button.place(x=200, y=220)
+            entry_camera = Entry(self.root, textvariable=self.entry_variables[i], width=40, font=("consolas", 11))
+            entry_camera.place(x=140, y=65 + (60 + gap) * i)
+
+            label_label = Label(self.root, text=f"Label {i + 1} =", font=("consolas", 12))
+            label_label.place(x=10, y=90 + (60 + gap) * i)
+
+            entry_label = Entry(self.root, textvariable=self.additional_entry_variables[i], width=40, font=("consolas", 11))
+            entry_label.place(x=140, y=95 + (60 + gap) * i)
+        
+
+        submit_button = Button(self.root, text="Execute", command=self.show_main_frame,
+                               font=("consolas",11),width=12, height=1, bg="yellow" )
+        submit_button.place(x=360, y=470)
 
     def show_main_frame(self):
         try:
+
+            if any(entry.get() == "" for entry in self.entry_variables + self.additional_entry_variables):
+                messagebox.showwarning("Warning", "Please fill in all the entry boxes.")
+                return  
+            
             cam_values = [int(entry.get()) for entry in self.entry_variables]
+            label = self.additional_values = [entry.get() for entry in self.additional_entry_variables]
+
             self.root.destroy()  # Close the InputVideo window
-            main_frame = MainFrame(cam_values)
+            main_frame = MainFrame(cam_values,label)
             main_frame.run()
         except ValueError:
             # Handle the case where non-integer values are entered
@@ -59,17 +82,16 @@ class InputVideo:
 
 
 class MainFrame:
-    def __init__(self,input_video_data):
+    def __init__(self,input_video_data, input_label):
         self.root = tk.Tk()
+        self.root.iconbitmap("images\logodrone.ico")
         self.root.state('zoomed')
         self.root.title("Main video")
         self.root.resizable(False,False)
         
         
-        
-
         self.cam1, self.cam2, self.cam3, self.cam4, self.cam5 = input_video_data
-
+        self.label1, self.label2, self.label3, self.label4, self.label5 = input_label
 
         self.__data1 = VideoData()
         self.__data2 = VideoData()
@@ -144,16 +166,6 @@ class MainFrame:
         self.switch_button.place(x=10,y=370)
 
         self.root.bind('<space>', self.switch_videos)
-        # self.root.bind('<Return>', self.save_canvas_image)
-
-        # keyboard.add_hotkey('space',lambda: )
-
-        # self.cap1 = cv2.VideoCapture(0)
-        # self.cap1.set(cv2.CAP_PROP_BUFFERSIZE,1)
-        # self.cap2 = cv2.VideoCapture('test1.mp4')
-        # self.cap2.set(cv2.CAP_PROP_BUFFERSIZE,1)
-        # self.cap3 = cv2.VideoCapture('test2.mp4')
-        # self.cap3.set(cv2.CAP_PROP_BUFFERSIZE,1)
 
         self.current_canvas = 1
 
@@ -164,18 +176,12 @@ class MainFrame:
         self.y = 23.435
         self.z = 43.535
 
-        
         self.dummy_time = datetime.datetime.now()
         self.flight_time = self.dummy_time.strftime("%H:%M:%S")
-
-
         self.altitude = 3.17
         self.voltage = 12.59
         self.flight_mode = "Stabilize"
         
-        
-       
-
         self.drone_status()
         self.update()
 
@@ -227,15 +233,12 @@ class MainFrame:
         return frame
 
     def update(self):
-        # kembalikan seperti semua yang diatas
 
         ret1, frame1 = self.__data1.getImage()
         ret2, frame2 = self.__data2.getImage()
         ret3, frame3 = self.__data3.getImage()
         ret4, frame4 = self.__data4.getImage()
         ret5, frame5 = self.__data5.getImage()
-
-        # YANG DIBAWAH KEMBALIKAN SEPERTI
 
         frame1_resized = None
         frame2_resized = None
@@ -244,9 +247,6 @@ class MainFrame:
         frame5_resized = None
 
         if ret1 and ret2 and ret3 and ret4 and ret5:
-            # frame1_resized = self.resize_frame(frame1)
-            # frame2_resized = self.resize_frame(frame2)
-            # frame3_resized = self.resize_frame(frame3)
 
             if self.current_canvas == 1:
                 frame1_resized = self.resize_frame(frame1)
@@ -289,11 +289,13 @@ class MainFrame:
             font_color = (255, 255, 255)
             font_thickness = 2
 
-            text1 = f"Camera 1"
-            text2 = f"Camera 2"
-            text3 = f"Camera 3"
-            text4 = f"Camera 4"
-            text5 = f"Camera 5"
+            # =================================== Video Label ================================================== #
+            text1 = f"{self.label1}"
+            text2 = f"{self.label2}"
+            text3 = f"{self.label3}"
+            text4 = f"{self.label4}"
+            text5 = f"{self.label5}"
+            # =================================== Video Label ================================================== #
 
             cv2.putText(frame1_resized, text1, (10, 30), font, font_scale, font_color, font_thickness)
             cv2.putText(frame2_resized, text2, (10, 30), font, font_scale, font_color, font_thickness)
