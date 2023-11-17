@@ -14,13 +14,56 @@ import os
 #download ghostscript
 # ghostscript_path = r'C:\Program Files (x86)\gs\gs10.02.1\bin'
 # os.environ['PATH'] += os.pathsep + ghostscript_path
-
-class main_frame:
-    def __init__(self, root, frame_atas, frame_bawah, frame_kotak):
+class InputVideo:
+    def __init__(self, root):
         self.root = root
-        self.frame_atas = frame_atas
-        self.frame_bawah = frame_bawah
-        self.frame_kotak = frame_kotak
+        self.root.title("Video Viewer")
+        self.root.resizable(False, False)
+
+        screen_width = self.root.winfo_screenwidth()
+        screen_height = self.root.winfo_screenheight()
+        x_position = (screen_width - 480) // 2
+        y_position = (screen_height - 340) // 2
+        self.root.geometry(f"480x340+{x_position}+{y_position}")
+
+        self.root.resizable(False, False)
+
+        self.cam_labels = ["Camera 1", "Camera 2", "Camera 3", "Camera 4", "Camera 5"]
+        self.entry_variables = [StringVar() for _ in range(5)]
+
+        self.title_box()
+
+    def title_box(self):
+        label_judul_frame = Label(self.root, text="Ground Control System\nConfiguration", font=("Consolas", 12))
+        label_judul_frame.pack(pady=5)
+
+        for i, cam_label in enumerate(self.cam_labels):
+            label = Label(self.root, text=cam_label, font=("consolas", 12))
+            label.place(x=10, y=60 + 30 * i)
+
+            entry = Entry(self.root, textvariable=self.entry_variables[i], width=40, font=("consolas", 11))
+            entry.place(x=90, y=65 + 30 * i)
+
+        submit_button = Button(self.root, text="Submit", command=self.show_main_frame)
+        submit_button.place(x=200, y=220)
+
+    def show_main_frame(self):
+        try:
+            cam_values = [int(entry.get()) for entry in self.entry_variables]
+            self.root.destroy()  # Close the InputVideo window
+            main_frame = MainFrame(cam_values)
+            main_frame.run()
+        except ValueError:
+            # Handle the case where non-integer values are entered
+            messagebox.showerror("Error", "Please enter valid integer values for cameras.")
+
+
+class MainFrame:
+    def __init__(self,root):
+        self.root = root
+        # self.frame_atas = frame_atas
+        # self.frame_bawah = frame_bawah
+        # self.frame_kotak = frame_kotak
 
         self.__data1 = VideoData()
         self.__data2 = VideoData()
@@ -48,6 +91,31 @@ class main_frame:
 
         self.screen_width = self.root.winfo_screenwidth()
         self.screen_height = self.root.winfo_screenheight()
+
+        self.screen_width = self.root.winfo_screenwidth()
+        self.screen_height = self.root.winfo_screenheight()
+
+        self.frame_atas = tk.Frame(self.root, width=self.screen_width // 1.3, height=self.screen_height // 1.57, bg="white",
+                                   highlightbackground="black", highlightthickness=3)
+        self.frame_atas.pack_propagate(False)
+        self.frame_atas.pack(pady=10, padx=10, anchor=tk.NW)
+
+        background_color = self.frame_atas.cget("bg")
+        label_di_frame = tk.Label(self.frame_atas, text="Main Camera Video", font=("Consolas", 18), bg=background_color)
+        label_di_frame.pack(pady=10)
+
+        self.frame_bawah = tk.Frame(self.root, width=self.screen_width // 1.015, height=self.screen_height // 3.4, bg="white",
+                                    highlightbackground="black", highlightthickness=3)
+        self.frame_bawah.pack_propagate(False)
+        self.frame_bawah.pack(pady=2)
+        background_color = self.frame_bawah.cget("bg")
+        label_di_frame = tk.Label(self.frame_bawah, text="Feed Camera", font=("Consolas", 18), bg=background_color)
+        label_di_frame.pack(pady=5)
+
+        self.frame_kotak = tk.Frame(self.root, width=self.screen_width // 4.8, height=self.screen_height // 1.57, bg="white",
+                                    highlightbackground="black", highlightthickness=3)
+        self.frame_kotak.pack_propagate(False)
+        self.frame_kotak.place(x=1125, y=10)
 
         self.canvas1 = tk.Canvas(self.frame_atas, width=1050, height=480)
         self.canvas1.place(x=25, y=60)
@@ -371,38 +439,41 @@ if __name__ == '__main__':
     root.state('zoomed')
     root.resizable(False, False)
 
-    screen_width = root.winfo_screenwidth()
-    screen_height = root.winfo_screenheight()
+    # screen_width = root.winfo_screenwidth()
+    # screen_height = root.winfo_screenheight()
 
-    # Frame Atas
+    # # Frame Atas
 
-    frame_atas = tk.Frame(root, width=screen_width // 1.3, height=screen_height // 1.57, bg="white",
-                          highlightbackground="black", highlightthickness=3)
-    frame_atas.pack_propagate(False)
-    frame_atas.pack(pady=10, padx=10, anchor=tk.NW)
+    # frame_atas = tk.Frame(root, width=screen_width // 1.3, height=screen_height // 1.57, bg="white",
+    #                       highlightbackground="black", highlightthickness=3)
+    # frame_atas.pack_propagate(False)
+    # frame_atas.pack(pady=10, padx=10, anchor=tk.NW)
 
-    background_color = frame_atas.cget("bg")
-    label_di_frame = tk.Label(frame_atas, text="Main Camera Video",
-                              font=("Consolas", 18), bg=background_color)
-    label_di_frame.pack(pady=10)
+    # background_color = frame_atas.cget("bg")
+    # label_di_frame = tk.Label(frame_atas, text="Main Camera Video",
+    #                           font=("Consolas", 18), bg=background_color)
+    # label_di_frame.pack(pady=10)
 
-    # Frame Bawah
+    # # Frame Bawah
 
-    frame_bawah = tk.Frame(root, width=screen_width // 1.015, height=screen_height // 3.4, bg="white",
-                           highlightbackground="black", highlightthickness=3)
-    frame_bawah.pack_propagate(False)
-    frame_bawah.pack(pady=2)
-    background_color = frame_bawah.cget("bg")
-    label_di_frame = tk.Label(frame_bawah, text="Feed Camera",
-                              font=("Consolas", 18), bg=background_color)
-    label_di_frame.pack(pady=5)
+    # frame_bawah = tk.Frame(root, width=screen_width // 1.015, height=screen_height // 3.4, bg="white",
+    #                        highlightbackground="black", highlightthickness=3)
+    # frame_bawah.pack_propagate(False)
+    # frame_bawah.pack(pady=2)
+    # background_color = frame_bawah.cget("bg")
+    # label_di_frame = tk.Label(frame_bawah, text="Feed Camera",
+    #                           font=("Consolas", 18), bg=background_color)
+    # label_di_frame.pack(pady=5)
 
-    frame_kotak = tk.Frame(root, width=screen_width // 4.8, height=screen_height // 1.57, bg="white",
-                           highlightbackground="black", highlightthickness=3)
-    frame_kotak.pack_propagate(False)
-    frame_kotak.place(x=1125, y=10)
+    # frame_kotak = tk.Frame(root, width=screen_width // 4.8, height=screen_height // 1.57, bg="white",
+    #                        highlightbackground="black", highlightthickness=3)
+    # frame_kotak.pack_propagate(False)
+    # frame_kotak.place(x=1125, y=10)
 
-    app = main_frame(root, frame_atas, frame_bawah, frame_kotak)
+    # ============================
+
+
+    app = MainFrame(root)
 
     root.protocol("WM_DELETE_WINDOW", app.on_closing)
     root.mainloop()
