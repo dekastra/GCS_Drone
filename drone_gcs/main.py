@@ -55,15 +55,21 @@ class InputVideo:
             main_frame.run()
         except ValueError:
             # Handle the case where non-integer values are entered
-            messagebox.showerror("Error", "Please enter valid integer values for cameras.")
+            print("Error", "Please enter valid integer values for cameras.")
 
 
 class MainFrame:
-    def __init__(self,root):
-        self.root = root
-        # self.frame_atas = frame_atas
-        # self.frame_bawah = frame_bawah
-        # self.frame_kotak = frame_kotak
+    def __init__(self,input_video_data):
+        self.root = tk.Tk()
+        self.root.state('zoomed')
+        self.root.title("Main video")
+        self.root.resizable(False,False)
+        
+        
+        
+
+        self.cam1, self.cam2, self.cam3, self.cam4, self.cam5 = input_video_data
+
 
         self.__data1 = VideoData()
         self.__data2 = VideoData()
@@ -71,17 +77,11 @@ class MainFrame:
         self.__data4 = VideoData()
         self.__data5 = VideoData()
 
-        # self.__fetcher1 = GetVideo(self.__data1, 0)
-        # self.__fetcher2 = GetVideo(self.__data2, "rtsp://192.168.50.116:8554/cam1")
-        # self.__fetcher3 = GetVideo(self.__data3, "rtsp://192.168.50.116:8554/cam2")
-        # self.__fetcher4 = GetVideo(self.__data4, "rtsp://192.168.50.116:8554/cam3")
-        # self.__fetcher5 = GetVideo(self.__data5, "rtsp://192.168.50.116:8554/cam4")
-
-        self.__fetcher1 = GetVideo(self.__data1, 0)
-        self.__fetcher2 = GetVideo(self.__data2, 1)
-        self.__fetcher3 = GetVideo(self.__data3, 2)
-        self.__fetcher4 = GetVideo(self.__data4, 3)
-        self.__fetcher5 = GetVideo(self.__data5, 4)
+        self.__fetcher1 = GetVideo(self.__data1, self.cam1)
+        self.__fetcher2 = GetVideo(self.__data2, self.cam2)
+        self.__fetcher3 = GetVideo(self.__data3, self.cam3)
+        self.__fetcher4 = GetVideo(self.__data4, self.cam4)
+        self.__fetcher5 = GetVideo(self.__data5, self.cam5)
 
         self.__fetcher1.start_fetch()
         self.__fetcher2.start_fetch()
@@ -407,21 +407,10 @@ class MainFrame:
                                      font=("Consolas", 11), bg=background_color)
         coordinates_label.pack(pady=1)
 
-        # switch_info = tk.Label(self.frame_kotak, text='<Space> = Switch Video\n <Enter> = Capture Image',
-        #                        font=("Consolas", 11), bg=background_color)
-        # switch_info.place(x=5, y=400)
 
         self.decrease_battery()
 
-    # def feed_camera_frame(self):
-    #     self.frame_bawah = tk.Frame(self.root, width=self.screen_width // 1.015, height=self.screen_height // 3.4, bg="white",
-    #                         highlightbackground="black", highlightthickness=3)
-    #     self.frame_bawah.pack_propagate(False)
-    #     self.frame_bawah.pack(pady=2)
-    #     self.background_color = self.frame_bawah.cget("bg")
-    #     self.label_di_frame = tk.Label(self.frame_bawah, text="Feed Camera",
-    #                             font=("Consolas", 18), bg=self.background_color)
-    #     self.label_di_frame.pack(pady=10)
+
 
     def on_closing(self):
         self.__fetcher1.stop_fetch()
@@ -432,51 +421,22 @@ class MainFrame:
 
         self.root.destroy()
 
+    def run(self):
+        self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
+        self.root.mainloop()
+
+
+
 
 if __name__ == '__main__':
-    root = tk.Tk()
-    root.title("Video Viewer")
-    root.state('zoomed')
-    root.resizable(False, False)
-
-    # screen_width = root.winfo_screenwidth()
-    # screen_height = root.winfo_screenheight()
-
-    # # Frame Atas
-
-    # frame_atas = tk.Frame(root, width=screen_width // 1.3, height=screen_height // 1.57, bg="white",
-    #                       highlightbackground="black", highlightthickness=3)
-    # frame_atas.pack_propagate(False)
-    # frame_atas.pack(pady=10, padx=10, anchor=tk.NW)
-
-    # background_color = frame_atas.cget("bg")
-    # label_di_frame = tk.Label(frame_atas, text="Main Camera Video",
-    #                           font=("Consolas", 18), bg=background_color)
-    # label_di_frame.pack(pady=10)
-
-    # # Frame Bawah
-
-    # frame_bawah = tk.Frame(root, width=screen_width // 1.015, height=screen_height // 3.4, bg="white",
-    #                        highlightbackground="black", highlightthickness=3)
-    # frame_bawah.pack_propagate(False)
-    # frame_bawah.pack(pady=2)
-    # background_color = frame_bawah.cget("bg")
-    # label_di_frame = tk.Label(frame_bawah, text="Feed Camera",
-    #                           font=("Consolas", 18), bg=background_color)
-    # label_di_frame.pack(pady=5)
-
-    # frame_kotak = tk.Frame(root, width=screen_width // 4.8, height=screen_height // 1.57, bg="white",
-    #                        highlightbackground="black", highlightthickness=3)
-    # frame_kotak.pack_propagate(False)
-    # frame_kotak.place(x=1125, y=10)
-
-    # ============================
-
-
-    app = MainFrame(root)
-
-    root.protocol("WM_DELETE_WINDOW", app.on_closing)
+    root = Tk()
+    input_video = InputVideo(root)
     root.mainloop()
+    
+
+    # app = MainFrame(root)
+
+   
 
     #
 
