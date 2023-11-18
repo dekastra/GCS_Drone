@@ -433,9 +433,6 @@ class MainFrame:
         self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
         self.root.mainloop()
 
-
-
-
 if __name__ == '__main__':
     root = Tk()
     input_video = InputVideo(root)
