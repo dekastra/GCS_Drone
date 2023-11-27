@@ -70,7 +70,7 @@ class InputVideo:
                 messagebox.showwarning("Warning", "Please fill in all the entry boxes.")
                 return  
             
-            cam_values = [int(entry.get()) for entry in self.entry_variables]
+            cam_values = [entry.get() for entry in self.entry_variables]
             label = self.additional_values = [entry.get() for entry in self.additional_entry_variables]
 
             self.root.destroy()  # Close the InputVideo window
@@ -117,7 +117,7 @@ class MainFrame:
         self.screen_width = self.root.winfo_screenwidth()
         self.screen_height = self.root.winfo_screenheight()
 
-        self.frame_atas = tk.Frame(self.root, width=self.screen_width // 1.3, height=self.screen_height // 1.57, bg="white",
+        self.frame_atas = tk.Frame(self.root, width =self.screen_width // 1.3, height=self.screen_height // 1.57, bg="white",
                                    highlightbackground="black", highlightthickness=3)
         self.frame_atas.pack_propagate(False)
         self.frame_atas.pack(pady=10, padx=10, anchor=tk.NW)
@@ -204,23 +204,6 @@ class MainFrame:
         self.canvas3.delete("all")
         self.canvas4.delete("all")
         self.canvas5.delete("all")
-
-    # def save_canvas_image(self, event=None):
-    #     # if self.current_canvas == 1:
-    #     x = datetime.datetime.now()
-    #     canvas_image = self.canvas1.postscript(colormode='color')
-    #     image = Image.open(io.BytesIO(canvas_image.encode('utf-8')))
-    #     image = np.array(image)
-
-    #     image = cv2.cvtColor(image, cv2.COLOR_RGBA2BGR)
-
-    #     directory = r'C:\Users\XPS15\PycharmProjects\drone_gcs\images' #change to new directory
-    #     if not os.path.exists(directory):
-    #         os.makedirs(directory)
-
-    #     filename = os.path.join(directory, f"Capture_at_{x.hour}_{x.minute}_{x.second}.png")
-    #     cv2.imwrite(filename, image)
-    #     print(f"Frame from canvas1 saved in {filename}")
 
     def resize_frame(self, frame):
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
