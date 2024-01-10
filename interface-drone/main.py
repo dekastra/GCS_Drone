@@ -47,7 +47,7 @@ class SetupPage:
         self.frame = tk.Frame(app.root)
         self.frame.pack(fill=tk.BOTH, expand=True)
 
-        # Create a master frame to hold all the elements
+        # master frame for all elements
         master_frame = tk.Frame(self.frame)
         master_frame.pack(expand=True, padx=20, pady=10)
 
