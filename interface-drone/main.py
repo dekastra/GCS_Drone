@@ -4,6 +4,7 @@ from PIL import Image, ImageTk
 import cv2
 import time
 
+
 class MyApp:
     def __init__(self, root):
         self.root = root
@@ -27,7 +28,7 @@ class MyApp:
         for page_name, page_instance in pages.items():
             menu_bar.add_command(label=page_name, command=lambda page=page_instance: self.show_page(page))
 
-        #default initial page --> setup
+        # default initial page --> setup
         self.show_page(self.setup_page)
         self.view_page.hide()
         self.about_page.hide()
@@ -38,6 +39,7 @@ class MyApp:
         self.current_page = page
         self.current_page.show()
 
+
 class SetupPage:
     def __init__(self, app, view_page):
         self.app = app
@@ -45,20 +47,24 @@ class SetupPage:
         self.frame = tk.Frame(app.root)
         self.frame.pack(fill=tk.BOTH, expand=True)
 
-        video_source_frame = tk.Frame(self.frame, padx=20, pady=10)
-        video_source_frame.grid(row=0, column=0, sticky='w', columnspan=3)
+        # Create a master frame to hold all the elements
+        master_frame = tk.Frame(self.frame)
+        master_frame.pack(expand=True, padx=20, pady=10)
+
+        video_source_frame = tk.Frame(master_frame, padx=20, pady=10)
+        video_source_frame.grid(row=0, column=0, sticky='w')
 
         tk.Label(video_source_frame, text="Video Source:").grid(row=0, column=0)
         tk.Entry(video_source_frame, textvariable=app.video_source, width=50).grid(row=0, column=1, padx=38)
 
-        dest_folder_frame = tk.Frame(self.frame, padx=20, pady=10)
-        dest_folder_frame.grid(row=1, column=0, sticky='w', columnspan=3)
+        dest_folder_frame = tk.Frame(master_frame, padx=20, pady=10)
+        dest_folder_frame.grid(row=1, column=0, sticky='w')
 
         tk.Label(dest_folder_frame, text="Destination Folder:").grid(row=1, column=0)
         tk.Entry(dest_folder_frame, textvariable=app.dest_folder, width=50).grid(row=1, column=1, padx=10)
         tk.Button(dest_folder_frame, text="Browse", command=self.browse_destination_folder).grid(row=1, column=2)
 
-        tk.Button(self.frame, text="Start Stream", command=self.start_stream).grid(row=2, column=0, sticky='news', padx=20, pady=20, columnspan=3)
+        tk.Button(master_frame, text="Start Stream", command=self.start_stream).grid(row=2, column=0, sticky='news', padx=20, pady=20, columnspan=3)
 
     def browse_destination_folder(self):
         folder_path = filedialog.askdirectory()
@@ -66,27 +72,27 @@ class SetupPage:
         self.view_page.save_path = folder_path
 
     def start_stream(self):
-        #release previous vid capture
+        # release previous vid capture
         if hasattr(self.app, 'cap'):
             self.app.cap.release()
 
-        #set new vid source
+        # set new vid source
         source = self.app.video_source.get()
-        
+
         if 'rtsp://' not in source:
             source = int(self.app.video_source.get())
 
         self.app.cap = cv2.VideoCapture(source)
-        
+
         if isinstance(source, int):
-            self.app.video_width = int(self.app.cap.get(cv2.CAP_PROP_FRAME_WIDTH)+490)
-        else: 
-            self.app.video_width = int(self.app.cap.get(cv2.CAP_PROP_FRAME_WIDTH)-144)
-            
+            self.app.video_width = int(self.app.cap.get(cv2.CAP_PROP_FRAME_WIDTH) + 490)
+        else:
+            self.app.video_width = int(self.app.cap.get(cv2.CAP_PROP_FRAME_WIDTH) - 144)
+
         self.app.video_height = int(self.app.cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
         self.app.target_height = int((9 / 16) * self.app.video_width)
 
-        #self.view_page.update_video()
+        # self.view_page.update_video()
 
         timestamp = time.strftime("%Y%m%d%H%M%S")
         filename = f"labels_{timestamp}"
@@ -98,6 +104,7 @@ class SetupPage:
     def show(self):
         self.frame.pack(fill=tk.BOTH, expand=True)
 
+
 class ViewPage:
     def __init__(self, app):
         self.app = app
@@ -107,7 +114,8 @@ class ViewPage:
         self.label = tk.Label(self.frame)
         self.label.grid(row=0, column=0, pady=10, sticky="news")
 
-        self.save_button = tk.Button(self.frame, text="Save Frame", font=('arial 12'), height=2, command=self.save_frame)
+        self.save_button = tk.Button(self.frame, text="Save Frame", font=('arial 12'), height=2,
+                                     command=self.save_frame)
         self.save_button.grid(row=2, column=1, pady=10, padx=10)
 
         self.label_var = tk.StringVar(self.frame)
@@ -123,7 +131,8 @@ class ViewPage:
         self.streaming_label = tk.Label(self.frame, text="Streaming Status: Stopped", fg="red", font=('arial 10'))
         self.streaming_label.grid(row=1, column=0, pady=10, padx=10, sticky="news")
 
-        self.stream_button = tk.Button(self.frame, text="Start Stream", font=('arial 12'), height=2, command=self.toggle_stream)
+        self.stream_button = tk.Button(self.frame, text="Start Stream", font=('arial 12'), height=2,
+                                       command=self.toggle_stream)
         self.stream_button.grid(row=3, column=0, columnspan=3, pady=10, padx=10, sticky="news")
 
         self.is_streaming = False  # Flag track streaming status
@@ -181,6 +190,7 @@ class ViewPage:
     def show(self):
         self.frame.pack(fill=tk.BOTH, expand=True)
 
+
 class AboutPage:
     def __init__(self, app):
         self.app = app
@@ -188,10 +198,12 @@ class AboutPage:
         self.frame.pack(fill=tk.BOTH, expand=True)
 
         # about text + logo
-        tk.Label(self.frame, text="Ground Control Station - Drone", font=('Arial 16 bold')).grid(row=0, column=0, sticky="news", columnspan=3, pady=10)
+        tk.Label(self.frame, text="Ground Control Station - Drone", font=('Arial 16 bold')).grid(row=0, column=0,
+                                                                                                 sticky="news",
+                                                                                                 columnspan=3, pady=10)
         tk.Label(self.frame, text="in collaboration with", font=('arial 12')).grid(row=1, column=0, columnspan=3)
 
-        # about: image 
+        # about: image
         image_paths = ["about/BINUS.png", "about/ITB.png", "about/TerraDrone.png"]
         self.tk_images = []
 
@@ -213,14 +225,15 @@ class AboutPage:
     def show(self):
         self.frame.pack(fill=tk.BOTH, expand=True)
 
+
 if __name__ == "__main__":
     root = tk.Tk()
     app = MyApp(root)
-    
+
     height = 500
     width = 800
-    x = (root.winfo_screenwidth()//2) - (width//2)
-    y = (root.winfo_screenheight()//2) - (height//2)
-    
+    x = (root.winfo_screenwidth() // 2) - (width // 2)
+    y = (root.winfo_screenheight() // 2) - (height // 2)
+
     root.geometry(f'{width}x{height}+{x}+{y}')
     root.mainloop()
