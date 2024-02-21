@@ -5,6 +5,7 @@ import cv2
 import time
 
 
+
 class MyApp:
     def __init__(self, root):
         self.root = root
@@ -38,6 +39,7 @@ class MyApp:
             self.current_page.hide()
         self.current_page = page
         self.current_page.show()
+
 
 
 class SetupPage:
@@ -79,10 +81,15 @@ class SetupPage:
         # set new vid source
         source = self.app.video_source.get()
 
+
         if 'rtsp://' not in source:
-            source = int(self.app.video_source.get())
+            if source == '':
+                source = 0
+            else:
+                source = int(self.app.video_source.get())
 
         self.app.cap = cv2.VideoCapture(source)
+
 
         if isinstance(source, int):
             self.app.video_width = int(self.app.cap.get(cv2.CAP_PROP_FRAME_WIDTH) + 490)
@@ -103,6 +110,7 @@ class SetupPage:
 
     def show(self):
         self.frame.pack(fill=tk.BOTH, expand=True)
+
 
 
 class ViewPage:
@@ -149,7 +157,6 @@ class ViewPage:
         self.is_streaming = True
         self.stream_button.config(text="Stop Stream")
         self.streaming_label.config(text="Streaming Status: Started", fg="green", font=('arial 10'))
-
         self.update_video()
 
     def stop_stream(self):
@@ -191,6 +198,7 @@ class ViewPage:
         self.frame.pack(fill=tk.BOTH, expand=True)
 
 
+
 class AboutPage:
     def __init__(self, app):
         self.app = app
@@ -224,6 +232,7 @@ class AboutPage:
 
     def show(self):
         self.frame.pack(fill=tk.BOTH, expand=True)
+
 
 
 if __name__ == "__main__":
