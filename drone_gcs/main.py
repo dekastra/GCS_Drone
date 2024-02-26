@@ -12,6 +12,7 @@ import datetime
 import os
 from tkinter import messagebox
 from ultralytics import YOLO
+from detector import Detector
 
 
 class InputVideo:
@@ -99,15 +100,26 @@ class MainFrame:
         # self.__fetcher4 = GetVideo(self.__data4, self.cam4)
         # self.__fetcher5 = GetVideo(self.__data5, self.cam5)
 
-        self.__fetcher1 = GetVideo(self.__data1, 4)
-        self.__fetcher2 = GetVideo(self.__data2, 5)
-        self.__fetcher3 = GetVideo(self.__data3, 2)
-        self.__fetcher4 = GetVideo(self.__data4, 1)
+        self.__fetcher1 = GetVideo(self.__data1, 3)
+        self.__fetcher2 = GetVideo(self.__data2, 1)
+        self.__fetcher3 = GetVideo(self.__data3, 1)
+        self.__fetcher4 = GetVideo(self.__data4, 0)
+
+        self.__detect1 = Detector(self.__data1)
+        # self.__detect2 = Detector(self.__data2)
+        # self.__detect3 = Detector(self.__data3)
+        # self.__detect4 = Detector(self.__data4)
+
 
         self.__fetcher1.start_fetch()
         self.__fetcher2.start_fetch()
         self.__fetcher3.start_fetch()
         self.__fetcher4.start_fetch()
+
+        self.__detect1.start_detect()
+        # self.__detect2.start_detect()
+        # self.__detect3.start_detect()
+        # self.__detect4.start_detect()
         # self.__fetcher5.start_fetch()
 
         # try:
@@ -245,7 +257,7 @@ class MainFrame:
 
     def update(self):
 
-        ret1, frame1 = self.__data1.getImage()
+        ret1, frame1 = self.__data1.getProcImage()
         ret2, frame2 = self.__data2.getImage()
         ret3, frame3 = self.__data3.getImage()
         ret4, frame4 = self.__data4.getImage()
@@ -332,22 +344,19 @@ class MainFrame:
             #     images = [self.photo5, self.photo1, self.photo2, self.photo3, self.photo4]
 
             if self.current_canvas == 1:
-                self.x, self.y, frame1_resized = self.detection(frame1_resized)
+
                 self.photo1 = ImageTk.PhotoImage(image=Image.fromarray(frame1_resized))
                 images = [self.photo1, self.photo2, self.photo3, self.photo4]
 
             elif self.current_canvas == 2:
-                self.x, self.y, frame2_resized = self.detection(frame2_resized)
                 self.photo2 = ImageTk.PhotoImage(image=Image.fromarray(frame2_resized))
                 images = [self.photo2, self.photo3, self.photo4, self.photo1]
 
             elif self.current_canvas == 3:
-                self.x, self.y, frame3_resized = self.detection(frame3_resized)
                 self.photo3 = ImageTk.PhotoImage(image=Image.fromarray(frame3_resized))
                 images = [self.photo3, self.photo4, self.photo1, self.photo2]
 
             else:  # Assuming current_canvas can only be 1, 2, 3, or 4
-                self.x, self.y, frame4_resized = self.detection(frame4_resized)
                 self.photo4 = ImageTk.PhotoImage(image=Image.fromarray(frame4_resized))
                 images = [self.photo4, self.photo1, self.photo2, self.photo3]
 
@@ -355,8 +364,10 @@ class MainFrame:
             self.canvas2.create_image(0, 0, image=images[1], anchor='nw')
             self.canvas3.create_image(0, 0, image=images[2], anchor='nw')
             self.canvas4.create_image(0, 0, image=images[3], anchor='nw')
+            
+            self.x,self.y = self.__detect1.getPosResult()
 
-            self.coordinates_label_number.configure(text=f"X = {self.x}\tY = {self.y}\n\n")
+            self.coordinates_label_number.configure(text=f"X = {self.x:.2f}\tY = {self.y:.2f}\n\n")
             
             
             # self.canvas5.create_image(0, 0, image=images[4], anchor='nw')
@@ -504,4 +515,3 @@ if __name__ == '__main__':
    
 
     #
-
