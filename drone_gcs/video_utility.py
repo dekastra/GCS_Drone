@@ -11,12 +11,7 @@ class GetVideo:
 
     def start_fetch(self):
         self.isRunning = True
-        # self.__stream = cv.VideoCapture(self.__source)
-        if isinstance(self.__source, int):
-            self.__stream = cv.VideoCapture(self.__source)
-        else:
-            self.__stream = cv.VideoCapture(self.__source)
-            
+        self.__stream = cv.VideoCapture(self.__source)
         if not self.__stream.isOpened():
             self.__stream.open(self.__source)
         self.__stream.set(cv.CAP_PROP_BUFFERSIZE, 1)
@@ -45,8 +40,8 @@ class ShowVideo:
 
     def show(self):
         while self.isRunning:
-            if self.__data.getImage() is not None:
-                cv.imshow(self.__title, self.__data.getImage())
+            if self.__data.getProcImage() is not None:
+                cv.imshow(self.__title, self.__data.getProcImage())
             if cv.waitKey(1) == ord('q'):
                 self.isRunning = False
                 break
@@ -58,12 +53,22 @@ class ShowVideo:
 
 class VideoData:
     def __init__(self):
-        self.__exist = False
         self.__image = None
+        self.__procimg = None
+        self.__imgexist = False
+        self.__procexist = False
 
-    def setImage(self, exist, image):
-        self.__exist = exist
+    def setImage(self,exist,image):
         self.__image = image
+        self.__imgexist = exist
 
     def getImage(self):
-        return self.__exist, self.__image
+        return self.__imgexist, self.__image
+
+    def setProcImage(self,exist, image):
+        self.__procimg = image
+        self.__procexist = exist
+
+    def getProcImage(self):
+        return self.__procexist, self.__procimg
+
